@@ -7,7 +7,8 @@ import 'package:flutter_foreground_task_example/TaskHandler.dart';
 //이 함수는 반드시 최상위에 있어야 한다.
 void useStartHandler() {
   // The setTaskHandler function must be called to handle the task in the background.
-  FlutterForegroundTask.setTaskHandler(FirstTaskHandler(updateCallback: useUpdateHandler));
+  FlutterForegroundTask.setTaskHandler(
+      FirstTaskHandler(updateCallback: useUpdateHandler));
 }
 
 //이 함수는 반드시 최상위에 있어야 한다.
@@ -31,21 +32,14 @@ class MyForegroundTaskUtil {
       receivePort = await FlutterForegroundTask.restartService();
     } else {
       receivePort = await FlutterForegroundTask.startService(
-        notificationTitle: 'Foreground Service is running',
-        notificationText: 'Tap to return to the app',
-        callback: useStartHandler
-      );
+          notificationTitle: 'Foreground Service is running',
+          notificationText: 'Tap to return to the app',
+          callback: useStartHandler);
     }
 
     if (receivePort != null) {
       _receivePort = receivePort;
-      _receivePort?.listen((message) {
-        if (message is DateTime) {
-          print('receive timestamp: $message');
-        } else if (message is int) {
-          print('receive updateCount: $message');
-        }
-      });
+      _receivePort?.listen(onMessage);
 
       return true;
     }
@@ -57,6 +51,13 @@ class MyForegroundTaskUtil {
     return await FlutterForegroundTask.stopService();
   }
 
+  static void onMessage(message) {
+    if (message is DateTime) {
+      print('receive timestamp: $message');
+    } else if (message is int) {
+      print('receive updateCount: $message');
+    }
+  }
 }
 
 class MyTaskWidget extends StatefulWidget {

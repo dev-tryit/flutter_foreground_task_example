@@ -2,6 +2,7 @@
 import 'dart:isolate';
 
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:http/http.dart' as http;
 
 class FirstTaskHandler extends TaskHandler {
   int updateCount = 0;
@@ -25,6 +26,10 @@ class FirstTaskHandler extends TaskHandler {
         notificationTitle: 'FirstTaskHandler',
         notificationText: timestamp.toString(),
         callback: updateCount >= 10 ? updateCallback : null);
+
+    var url = Uri.parse('https://google.com');
+    var response = await http.get(url);
+    print("response : ${response.body}");
 
     // Send data to the main isolate.
     sendPort?.send(timestamp);
